@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author      Peter Atef <info@scandiweb.com>
+ * @package     Scandiweb_GTM
+ * @copyright   Copyright (c) 2023 Scandiweb, Ltd (https://scandiweb.com)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Scandiweb_GTM" setup_version="1.0.0">
+        <sequence>
+            <module name="Magento_PageBuilder"/>
+        </sequence>
+    </module>
+</config>

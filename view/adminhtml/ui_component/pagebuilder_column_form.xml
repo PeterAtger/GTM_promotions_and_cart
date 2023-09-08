@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <!-- Full Form: Magento/PageBuilder/view/adminhtml/ui_component/pagebuilder_column_form.xml -->
+    <fieldset name="advanced">
+        <field name="promoId" sortOrder="90" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Promo ID</label>
+                <notice translate="true">A unique ID to identify your promotion.</notice>
+            </settings>
+        </field>
+        <field name="promoName" sortOrder="100" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Promo Name</label>
+                <notice translate="true">A unique name for your promotion.</notice>
+            </settings>
+        </field>
+        <field name="promoCreative" sortOrder="110" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Promo Creative</label>
+                <notice translate="true">Category name for a group of similar promotions.</notice>
+            </settings>
+        </field>
+    </fieldset>
+</form>

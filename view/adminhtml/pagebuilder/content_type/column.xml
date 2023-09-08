@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_PageBuilder:etc/content_type.xsd">
+    <!-- See Magento/PageBuilder/view/adminhtml/pagebuilder/content_type/column.xml -->
+    <!-- Add or change styles, attributes, elements, and appearances as needed. -->
+    <!-- Be sure to remove any appearances, elements, and template references you are not overriding. -->
+    <type name="column">
+        <appearances>
+            <appearance name="full-height"
+                        preview_template="Magento_PageBuilder/content-type/column/full-height/preview"
+                        master_template="Magento_PageBuilder/content-type/column/full-height/master">
+                <elements>
+                    <element name="main">
+                        <attribute name="promoId" source="data-promoId"/>
+                        <attribute name="promoName" source="data-promoName"/>
+                        <attribute name="promoCreative" source="data-promoCreative"/>
+                    </element>
+                </elements>
+            </appearance>
+        </appearances>
+    </type>
+</config>

@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @author      Peter Atef <info@scandiweb.com>
+ * @package     Scandiweb_GTM
+ * @copyright   Copyright (c) 2023 Scandiweb, Ltd (https://scandiweb.com)
+ */
+
+/** @var Scandiweb\GTM\Block\GeneralEvent $block */
+$data = json_encode($block->collectLayer());
+?>
+
+<!-- Add to cart & promos -->
+<script type="text/x-magento-init">
+    {
+    "*": {
+            "Scandiweb_GTM/js/dataLayer": {}
+        }
+    }
+</script>
+
+<script>
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(<?= $data ?>);
+</script>
