@@ -70,37 +70,50 @@ define(["ko",
 
             initializeCartWatcher: function () {
                 var cart = customerData.get("cart");
-                var count = this.getPrevCart()?.summary_count;
                 var previousCart = this.getPrevCart();
                 var that = this;
 
                 cart.subscribe(function () {
-                    if (
-                        cart().summary_count > count
-                        || (cart().summary_count && !count)
-                    ) {
-                        var newCart = cart();
+                    var newCart = cart();
+                    var addedItems = [];
+                    var removedItems = [];
 
-                        // Get Newly added Items
-                        var addedItems = that.getNewItems(previousCart, newCart);
+                    if (newCart?.items && previousCart?.items) {
+                        newCart.items.forEach(newItem => {
+                            const matchedItem = previousCart.items.find(prevItem => prevItem.product_sku === newItem.product_sku);
+                            if (matchedItem) {
+                                const qtyDiff = newItem.qty - matchedItem.qty;
+                                if (qtyDiff !== 0) {
+                                    const updatedItem = { ...newItem };
+                                    if (qtyDiff < 0) {
+                                        updatedItem.qty = -qtyDiff;
+                                        removedItems.push(updatedItem);
+                                    } else if (qtyDiff > 0) {
+                                        updatedItem.qty = qtyDiff;
+                                        addedItems.push(updatedItem);
+                                    }
+                                }
+                            } else {
+                                addedItems.push(newItem);
+                            }
+                        });
 
-                        // Get Cart datalyer Data
-                        var layerData = that.getCartData('add_to_cart', addedItems);
-
-                        window.dataLayer.push(layerData);
+                        previousCart.items.forEach(prevItem => {
+                            const matchedItem = newCart.items.find(newItem => newItem.product_sku === prevItem.product_sku);
+                            if (!matchedItem) {
+                                const removedItem = { ...prevItem };
+                                removedItem.qty = prevItem.qty;
+                                removedItems.push(removedItem);
+                            }
+                        });
                     }
 
-                    else if (
-                        cart().summary_count < count
-                    ) {
-                        var newCart = cart();
-
-                        // Get Removed Items
-                        var addedItems = that.getNewItems(newCart, previousCart);
-
-                        // Get Cart datalyer Data
-                        var layerData = that.getCartData('remove_from_cart', addedItems);
-
+                    if (removedItems.length > 0 && !(window.location.pathname === '/checkout/' && window.location.hash === '#payment') && window.location.pathname !== '/checkout/onepage/success/' ) {
+                        const layerData = that.getCartData('remove_from_cart', removedItems);
+                        window.dataLayer.push(layerData);
+                    }
+                    if (addedItems.length > 0) {
+                        const layerData = that.getCartData('add_to_cart', addedItems);
                         window.dataLayer.push(layerData);
                     }
 
@@ -109,57 +122,37 @@ define(["ko",
 
                     // Update previous cart for next call
                     previousCart = that.cloneCart(cart());
-                    count = cart().summary_count;
                 });
             },
-
-
-            getNewItems: function (oldCart, newCart) {
-                var newItems = [];
-
-                if (!newCart.items) {
-                    return;
-                }
-
-                if (!oldCart.items) {
-                    return newCart.items;
-                }
-
-                newCart.items.forEach(function (elem) {
-                    var similar = oldCart.items.find(function (item) {
-                        return item.item_id == elem.item_id;
-                    });
-                    if (similar) {
-                        if (elem.qty > similar.qty) {
-                            newItems.push({ ...elem, qty: elem.qty - similar.qty });
-                        }
-                    } else {
-                        newItems.push(elem);
-                    }
-                });
-
-                return newItems;
-            },
-
 
             getCartData: function (event, newItems) {
+                var currency = '';
+                var value = 0;
                 var eventData = {
                     event,
                     ecommerce: {
-                        currency: 'CAD',
                         items: []
                     }
                 }
 
                 newItems.forEach((elem) => {
+                    value += elem.product_price_value * elem.qty;
+                    currency = elem.currency;
+                    console.log(elem);
+
                     eventData.ecommerce.items.push({
                         item_id: elem.product_sku,
                         item_name: elem.product_name,
                         quantity: elem.qty,
                         price: elem.product_price_value,
-                        category: elem.product_category,
-                    })
-                })
+                        item_brand: elem.product_brand,
+                        item_type: elem.item_type,
+                        currency: elem.currency,
+                        ...elem.product_category
+                    });
+                });
+                eventData.ecommerce.value = value.toFixed(2);
+                eventData.ecommerce.currency = currency;
 
                 return eventData;
             },
